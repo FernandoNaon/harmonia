@@ -18,6 +18,8 @@ export const notes: NoteData[] = [
 export const scaleOptions: Option[] = [
   { value: "Major", label: "Major" },
   { value: "Minor", label: "Minor" },
+  { value: "Dim", label: "Diminished" },
+  { value: "Aug", label: "Augmented" },
 ];
 
 export const seventhOptions: Option[] = [

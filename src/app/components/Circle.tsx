@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import ExtensionSelect from "./ExtensionSelect";
-import { NoteData, isMajor, seventh } from "../types/Index";
+import { NoteData, isMajor, seventh, modality } from "../types/Index";
 import { notes, scaleOptions, seventhOptions } from "../utils/utils";
 
 const Circle: React.FC = () => {
-  const [scale, setScale] = useState<NoteData>({ value: 1, label: "C" });
   const [isMajor, setIsMajor] = useState<isMajor>({ isMajor: true });
+  const [scale, setScale] = useState<NoteData>({ value: 1, label: "C" });
+  const [modality, setModality] = useState<modality>({ modality: "Major" });
+
   const [seventh, setSeventh] = useState<seventh>({
     hasSeventh: false,
   });
@@ -15,23 +17,19 @@ const Circle: React.FC = () => {
   const radius = 150;
   const angleIncrement = (2 * Math.PI) / notes.length;
 
-  const handleChangeNote = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = parseInt(e.target.value);
+  const handleChangeNote = (value: number) => {
+    const selectedValue = value;
     const selectedNote = notes.find((note) => note.value === selectedValue);
     if (selectedNote) {
       setScale(selectedNote);
     }
   };
 
-  const handleChangeScale = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
-    const isMajor = selectedValue === "Major";
-    setIsMajor({ isMajor });
+  const handleChangeScale = (selectedValue: string) => {
+    setModality({ modality: selectedValue });
   };
 
-  const handleChangeSeventh = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
-
+  const handleChangeSeventh = (selectedValue: string) => {
     let hasSeventh: boolean = false;
     let isMajor: boolean | undefined;
 
@@ -52,10 +50,33 @@ const Circle: React.FC = () => {
 
   const generateChord = (noteIndex: number): NoteData[] => {
     let chordIntervals: number[];
-    if (seventh.hasSeventh && seventh.isMajor !== undefined) {
-      chordIntervals = seventh.isMajor ? [0, 4, 7, 11] : [0, 3, 7, 10];
-    } else {
-      chordIntervals = isMajor.isMajor ? [0, 4, 7] : [0, 3, 7];
+    switch (modality.modality) {
+      case "Major":
+        chordIntervals = [0, 4, 7];
+        if (seventh.hasSeventh) {
+          chordIntervals.push(seventh.isMajor ? 11 : 10);
+        }
+        break;
+      case "Minor":
+        chordIntervals = [0, 3, 7];
+        if (seventh.hasSeventh) {
+          chordIntervals.push(seventh.isMajor ? 11 : 10);
+        }
+        break;
+      case "Dim":
+        chordIntervals = [0, 3, 6];
+        if (seventh.hasSeventh) {
+          chordIntervals.push(10);
+        }
+        break;
+      case "Aug":
+        chordIntervals = [0, 4, 8];
+        if (seventh.hasSeventh) {
+          chordIntervals.push(11);
+        }
+        break;
+      default:
+        throw new Error("Invalid modality");
     }
 
     const chordNotes = chordIntervals.map((interval) => {
@@ -63,6 +84,7 @@ const Circle: React.FC = () => {
       return notes[newIndex];
     });
 
+    console.log(chordNotes);
     return chordNotes;
   };
 
@@ -84,10 +106,6 @@ const Circle: React.FC = () => {
   };
   const chordNotes = generateChord(scale.value - 1);
 
-  useEffect(() => {
-    console.log(chordNotes);
-  }, [chordNotes, scale]);
-
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-center">
@@ -104,6 +122,7 @@ const Circle: React.FC = () => {
               justifyContent: "center",
               zIndex: 1,
               width: scale.label === note.label ? "4rem" : "3rem",
+              height: scale.label === note.label ? "4rem" : "3rem",
               fontSize: scale.label === note.label ? "1.5rem" : "1rem",
             };
             const isInChord = chordNotes.some(
@@ -117,7 +136,12 @@ const Circle: React.FC = () => {
                     {note.label}
                   </p>
                 ) : (
-                  <p>{note.label}</p>
+                  <button
+                    onClick={() => handleChangeNote(note.value)}
+                    className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border rounded-full shadow"
+                  >
+                    {note.label}
+                  </button>
                 )}
               </div>
             );
@@ -128,14 +152,7 @@ const Circle: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex justify-start">
-        <ExtensionSelect
-          label="Select a Triad"
-          id="Triad"
-          options={notes}
-          onChange={handleChangeNote}
-        />
-
+      <div className="flex flex-col gap-8 justify-start">
         <ExtensionSelect
           label="Chord Modality"
           id="scale"

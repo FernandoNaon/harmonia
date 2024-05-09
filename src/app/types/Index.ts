@@ -17,11 +17,15 @@ export interface ExtensionSelectProps {
   label: string;
   id: string;
   options: Option[] | NoteData[];
-  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: string) => void;
 }
 
 export type isMajor = {
   isMajor: boolean;
+};
+
+export type modality = {
+  modality: string;
 };
 
 export type seventh = {
