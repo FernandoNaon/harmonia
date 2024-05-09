@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ExtensionSelect from "./ExtensionSelect";
 import { NoteData, isMajor, seventh, modality } from "../types/Index";
 import { notes, scaleOptions, seventhOptions } from "../utils/utils";
 
 const Circle: React.FC = () => {
-  const [isMajor, setIsMajor] = useState<isMajor>({ isMajor: true });
   const [scale, setScale] = useState<NoteData>({ value: 1, label: "C" });
   const [modality, setModality] = useState<modality>({ modality: "Major" });
 
@@ -83,8 +82,6 @@ const Circle: React.FC = () => {
       const newIndex = (noteIndex + interval) % notes.length;
       return notes[newIndex];
     });
-
-    console.log(chordNotes);
     return chordNotes;
   };
 
@@ -155,14 +152,14 @@ const Circle: React.FC = () => {
       <div className="flex flex-col gap-8 justify-start">
         <ExtensionSelect
           label="Chord Modality"
-          id="scale"
           options={scaleOptions}
+          modality={modality.modality}
           onChange={handleChangeScale}
         />
         <ExtensionSelect
           label="Seventh Extension"
-          id="seventh"
           options={seventhOptions}
+          modality={modality.modality}
           onChange={handleChangeSeventh}
         />
       </div>

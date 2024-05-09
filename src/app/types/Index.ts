@@ -15,7 +15,7 @@ export interface NoteProps {
 
 export interface ExtensionSelectProps {
   label: string;
-  id: string;
+  modality: string;
   options: Option[] | NoteData[];
   onChange: (e: string) => void;
 }
