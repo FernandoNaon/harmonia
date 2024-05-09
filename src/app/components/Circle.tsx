@@ -1,28 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import Note from "./Note";
+import React, { useEffect, useState } from "react";
+import ExtensionSelect from "./ExtensionSelect";
+import { NoteData, isMajor, seventh } from "../types/Index";
+import { notes, scaleOptions, seventhOptions } from "../utils/utils";
 
-interface NoteData {
-  value: number;
-  note: string;
-}
-
-interface CircleProps {
-  notes: NoteData[];
-}
-
-type isMajor = {
-  isMajor: boolean;
-};
-
-type seventh = {
-  hasSeventh: boolean;
-  isMajor?: boolean;
-};
-
-const Circle: React.FC<CircleProps> = ({ notes }) => {
-  const [scale, setScale] = useState<NoteData>({ value: 1, note: "C" });
+const Circle: React.FC = () => {
+  const [scale, setScale] = useState<NoteData>({ value: 1, label: "C" });
   const [isMajor, setIsMajor] = useState<isMajor>({ isMajor: true });
   const [seventh, setSeventh] = useState<seventh>({
     hasSeventh: false,
@@ -41,8 +25,8 @@ const Circle: React.FC<CircleProps> = ({ notes }) => {
 
   const handleChangeScale = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
-    const isMajor = selectedValue === "Major"; // Check if the selected value is "Major"
-    setIsMajor({ isMajor }); // Update isMajor state based on the selected value
+    const isMajor = selectedValue === "Major";
+    setIsMajor({ isMajor });
   };
 
   const handleChangeSeventh = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -55,148 +39,115 @@ const Circle: React.FC<CircleProps> = ({ notes }) => {
       hasSeventh = true;
       isMajor = selectedValue === "Major";
     }
-
     setSeventh({ hasSeventh, isMajor });
-
-    console.log(seventh);
   };
 
   const calculatePosition = (index: number) => {
-    const angle = index * angleIncrement;
-    const x = radius * Math.cos(angle) + radius;
-    const y = radius * Math.sin(angle) + radius;
+    const startAngle = -Math.PI / 2;
+    const angle = startAngle + index * angleIncrement;
+    const x = Math.round(radius * Math.cos(angle) + radius);
+    const y = Math.round(radius * Math.sin(angle) + radius);
     return { x, y };
   };
 
-  // const generateChord = (noteIndex: number): NoteData[] => {
-  //   const chordIntervals =
-  //     seventh.seventh === null && isMajor.isMajor ? [0, 4, 7] : [0, 3, 7];
-
-  //   //add this if seventh.seventh = true => [0, 4, 7,11] if it is false [0, 3, 7, 11]
-
-  //   const triadNotes = chordIntervals.map((interval) => {
-  //     const newIndex = (noteIndex + interval) % notes.length;
-  //     return notes[newIndex];
-  //   });
-  //   return triadNotes;
-  // };
-
   const generateChord = (noteIndex: number): NoteData[] => {
     let chordIntervals: number[];
-
-    // Check if seventh exists and is true
     if (seventh.hasSeventh && seventh.isMajor !== undefined) {
       chordIntervals = seventh.isMajor ? [0, 4, 7, 11] : [0, 3, 7, 10];
     } else {
       chordIntervals = isMajor.isMajor ? [0, 4, 7] : [0, 3, 7];
     }
 
-    const triadNotes = chordIntervals.map((interval) => {
+    const chordNotes = chordIntervals.map((interval) => {
       const newIndex = (noteIndex + interval) % notes.length;
       return notes[newIndex];
     });
-    return triadNotes;
+
+    return chordNotes;
   };
 
-  const drawTriadLines = () => {
+  const drawChordLines = () => {
     if (!scale) return null;
-
-    const triadNotes = generateChord(scale.value - 1); // Note value starts from 1
-    const points = triadNotes.map(({ value }) => {
+    const chordNotes = generateChord(scale.value - 1);
+    const points = chordNotes.map(({ value }) => {
       const { x, y } = calculatePosition(value - 1);
       return `${x},${y}`;
     });
     const d = `M${points.join("L")}Z`;
 
-    return <path d={d} fill="none" stroke="red" strokeWidth="2" />;
+    const pathStyle: React.CSSProperties = {
+      fill: "none",
+      stroke: "var(--primary-color)",
+      strokeWidth: "2",
+    };
+    return <path d={d} style={pathStyle} />;
   };
+  const chordNotes = generateChord(scale.value - 1);
+
+  useEffect(() => {
+    console.log(chordNotes);
+  }, [chordNotes, scale]);
 
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-center">
-        <div className="relative ml-9 mt-9 w-80 h-80">
+        <div className="relative mt-9 w-80 h-80">
           {notes.map((note, index) => {
             const { x, y } = calculatePosition(note.value - 1);
+            const noteStyle: React.CSSProperties = {
+              position: "absolute",
+              top: `${y}px`,
+              left: `${x}px`,
+              transform: "translate(-50%, -50%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1,
+              width: scale.label === note.label ? "4rem" : "3rem",
+              fontSize: scale.label === note.label ? "1.5rem" : "1rem",
+            };
+            const isInChord = chordNotes.some(
+              (chordNote) => chordNote.value === note.value
+            );
 
             return (
-              <div key={index} className="absolute" style={{ top: y, left: x }}>
-                <Note note={note} />
+              <div key={index} style={noteStyle}>
+                {isInChord ? (
+                  <p className="w-9 border-4 bg-[var(--primary-color)] rounded-full flex justify-center align-middle">
+                    {note.label}
+                  </p>
+                ) : (
+                  <p>{note.label}</p>
+                )}
               </div>
             );
           })}
-          <svg className="w-full h-full">
-            {scale && drawTriadLines()}
-            <circle
-              cx={radius}
-              cy={radius}
-              r={radius}
-              fill="transparent"
-              stroke="black"
-              strokeWidth="2"
-            />
+          <svg className="z-0 absolute w-full h-full">
+            {scale && drawChordLines()}
           </svg>
         </div>
       </div>
 
       <div className="flex justify-start">
-        <form className="max-w-sm mx-auto mt-8">
-          <label
-            htmlFor="notes"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Select a scale
-          </label>
-          <select
-            id="notes"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            onChange={handleChangeNote}
-            value={scale.value}
-          >
-            <option disabled>Choose a Scale</option>
-            {notes.map((note, index) => (
-              <option value={note.value} key={index}>
-                {note.note}
-              </option>
-            ))}
-          </select>
-        </form>
+        <ExtensionSelect
+          label="Select a Triad"
+          id="Triad"
+          options={notes}
+          onChange={handleChangeNote}
+        />
 
-        <form className="max-w-sm mx-auto mt-8">
-          <label
-            htmlFor="scale"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Select a scale
-          </label>
-          <select
-            id="scale"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            onChange={handleChangeScale}
-          >
-            <option disabled>Choose an option</option>
-            <option value="Major">Major</option>
-            <option value="Minor">Minor</option>
-          </select>
-        </form>
-
-        <form className="max-w-sm mx-auto mt-8">
-          <label
-            htmlFor="seventh"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Add a 7th
-          </label>
-          <select
-            id="seventh"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            onChange={handleChangeSeventh}
-          >
-            <option disabled>Choose an option</option>
-            <option value="Null">No 7th</option>
-            <option value="Major">Major 7th</option>
-            <option value="Minor">Minor 7th</option>
-          </select>
-        </form>
+        <ExtensionSelect
+          label="Chord Modality"
+          id="scale"
+          options={scaleOptions}
+          onChange={handleChangeScale}
+        />
+        <ExtensionSelect
+          label="Seventh Extension"
+          id="seventh"
+          options={seventhOptions}
+          onChange={handleChangeSeventh}
+        />
       </div>
     </div>
   );
