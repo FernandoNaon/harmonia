@@ -11,7 +11,7 @@ const ExtensionSelect: React.FC<ExtensionSelectProps> = ({
   return (
     <div>
       <p className="text-sm">{label}</p>
-      <div className="inline-flex">
+      <div className="inline-flex gap-1">
         {options.map((option, index) => {
           if (
             (modality === "Dim" && option.label === "Major 7th") ||

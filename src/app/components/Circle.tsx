@@ -97,7 +97,7 @@ const Circle: React.FC = () => {
     const pathStyle: React.CSSProperties = {
       fill: "none",
       stroke: "var(--primary-color)",
-      strokeWidth: "2",
+      strokeWidth: "4",
     };
     return <path d={d} style={pathStyle} />;
   };
@@ -114,13 +114,8 @@ const Circle: React.FC = () => {
               top: `${y}px`,
               left: `${x}px`,
               transform: "translate(-50%, -50%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               zIndex: 1,
-              width: scale.label === note.label ? "4rem" : "3rem",
-              height: scale.label === note.label ? "4rem" : "3rem",
-              fontSize: scale.label === note.label ? "1.5rem" : "1rem",
+              fontSize: scale.label === note.label ? "1.75rem" : "1rem",
             };
             const isInChord = chordNotes.some(
               (chordNote) => chordNote.value === note.value
@@ -129,13 +124,13 @@ const Circle: React.FC = () => {
             return (
               <div key={index} style={noteStyle}>
                 {isInChord ? (
-                  <p className="w-9 border-4 bg-[var(--primary-color)] rounded-full flex justify-center align-middle">
+                  <button className="bg-[var(--primary-color)] h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center">
                     {note.label}
-                  </p>
+                  </button>
                 ) : (
                   <button
                     onClick={() => handleChangeNote(note.value)}
-                    className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border rounded-full shadow"
+                    className="bg-white hover:bg-gray-100 h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center"
                   >
                     {note.label}
                   </button>
@@ -149,7 +144,7 @@ const Circle: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-8 justify-start">
+      <div className="flex flex-col gap-8 justify-start mx-2">
         <ExtensionSelect
           label="Chord Modality"
           options={scaleOptions}
