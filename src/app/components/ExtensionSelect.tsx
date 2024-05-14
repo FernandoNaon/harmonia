@@ -8,14 +8,15 @@ const ExtensionSelect: React.FC<ExtensionSelectProps> = ({
   options,
   onChange,
 }) => {
+
   return (
     <div>
       <p className="text-sm">{label}</p>
       <div className="inline-flex gap-1">
         {options.map((option, index) => {
           if (
-            (modality === "Dim" && option.label === "Major 7th") ||
-            (modality === "Aug" && option.label === "Minor 7th")
+            (modality === "Dim" && option.label === "Maj 7th") ||
+            (modality === "Aug" && option.label === "Min 7th")
           ) {
             return null;
           }
