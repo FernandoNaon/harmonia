@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import AudioControls from "./AudioControls";
 import ExtensionSelect from "./ExtensionSelect";
 import { NoteData, seventh, modality } from "../types/Index";
 import { notes, scaleOptions, seventhOptions } from "../utils/utils";
@@ -30,8 +31,6 @@ const Circle: React.FC = () => {
     const octaveOffset = noteValue < baseNote ? 12 : 0;
     return `/notes/${noteValue + octaveOffset}.wav`;
   };
-
-
 
   const handleChangeNote = (value: number) => {
     const selectedNote = notes.find((note) => note.value === value);
@@ -152,19 +151,7 @@ const Circle: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <label className="inline-flex items-center align-bottom cursor-pointe mt-4">
-        <input
-          type="checkbox"
-          checked={audio}
-          onChange={handleAudioToggle}
-          className="sr-only peer"
-        />
-        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-        <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-          🔊
-        </span>
-      </label>
-
+      <AudioControls audio={audio} onAudioToggle={handleAudioToggle} />
       <div className="flex items-center justify-center">
         <div className="relative mt-9 w-80 h-80">
           {notes.map((note, index) => {
@@ -203,7 +190,6 @@ const Circle: React.FC = () => {
           </svg>
         </div>
       </div>
-
       <div className="flex flex-col gap-8 justify-start mx-2">
         <ExtensionSelect
           label="Chord Modality"
