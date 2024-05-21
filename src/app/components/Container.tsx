@@ -5,6 +5,7 @@ import AudioControls from "./AudioControls";
 import HarmonicSphere from "./HarmonicSphere";
 import { useHarmonia } from "../context/HarmoniaContext";
 import ChordGenerator from "./ChordGenerator";
+import ToolSelector from "./ToolSelector";
 
 const Container: React.FC = () => {
   const {} = useHarmonia();
@@ -14,7 +15,10 @@ const Container: React.FC = () => {
       <AudioControls />
       <div className="flex flex-col sm:flex-col md:flex-col lg:flex-row items-center gap-20 mx-8">
         <HarmonicSphere />
-        <ChordGenerator />
+        <div>
+          <ToolSelector />
+          <ChordGenerator />
+        </div>
       </div>
     </>
   );
