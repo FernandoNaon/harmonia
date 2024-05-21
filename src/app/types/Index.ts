@@ -33,8 +33,3 @@ export type seventh = {
   hasSeventh: boolean;
   isMajor?: boolean;
 };
-
-export interface AudioControlsProps {
-  audio: boolean;
-  onAudioToggle: () => void;
-}

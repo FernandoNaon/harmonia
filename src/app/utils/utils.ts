@@ -27,3 +27,6 @@ export const seventhOptions: Option[] = [
   { value: "Major", label: "Maj 7th" },
   { value: "Minor", label: "Min 7th" },
 ];
+
+export const radius = 150;
+export const angleIncrement = (2 * Math.PI) / notes.length;
