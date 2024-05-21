@@ -1,7 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { NoteData, seventh, modality } from "../types/Index";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
+import { NoteData, seventh, modality, tool } from "../types/Index";
 import * as Tone from "tone";
 import { radius, angleIncrement, notes } from "../utils/utils";
 
@@ -19,6 +25,9 @@ interface HarmoniaContext {
   setAudio: React.Dispatch<React.SetStateAction<boolean>>;
   players: Tone.Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Tone.Player[]>>;
+  selectedTool: tool;
+  setSelectedTool: React.Dispatch<React.SetStateAction<tool>>;
+
   getNoteFilePath: (noteValue: number, baseNote: number) => string;
   handleChangeNote: (value: number, notes: NoteData[]) => void;
   playChordSequentially: () => void;
@@ -29,6 +38,7 @@ interface HarmoniaContext {
   drawChordLines: () => ReactNode;
   generateChord: (noteIndex: number) => NoteData[];
   preloadAudio: () => void;
+  handleChangeTool: (selectedValue: string) => void;
 }
 
 const HarmoniaContext = createContext<HarmoniaContext | undefined>(undefined);
@@ -40,11 +50,11 @@ interface HarmoniaProviderProps {
 export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
   children,
 }) => {
-
   const test = "Context works!!!";
   const [scale, setScale] = useState<NoteData>({ value: 1, label: "C" });
   const [modality, setModality] = useState<modality>({ modality: "Major" });
   const [seventh, setSeventh] = useState<seventh>({ hasSeventh: false });
+  const [selectedTool, setSelectedTool] = useState<tool>({ value: "chordGen" });
 
   const [chordNotes, setChordNotes] = useState<NoteData[]>([]);
   const [audio, setAudio] = useState<boolean>(false);
@@ -88,6 +98,10 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
 
   const handleAudioToggle = () => {
     setAudio(!audio);
+  };
+
+  const handleChangeTool = (selectedValue: string) => {
+    setSelectedTool({ value: selectedValue });
   };
 
   const calculatePosition = (index: number) => {
@@ -180,6 +194,10 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
     preloadAudio();
   }, [chordNotes]);
 
+  useEffect(() => {
+   console.log(selectedTool.value)
+  }, [selectedTool]);
+
   return (
     <HarmoniaContext.Provider
       value={{
@@ -206,6 +224,9 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
         drawChordLines,
         generateChord,
         preloadAudio,
+        selectedTool,
+        setSelectedTool,
+        handleChangeTool
       }}
     >
       {children}

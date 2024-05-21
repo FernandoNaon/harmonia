@@ -28,5 +28,10 @@ export const seventhOptions: Option[] = [
   { value: "Minor", label: "Min 7th" },
 ];
 
+export const tool: Option[] = [
+  { value: "chordGen", label: "Chord Generator" },
+  { value: "greekModes", label: "Greek Modes" },
+];
+
 export const radius = 150;
 export const angleIncrement = (2 * Math.PI) / notes.length;

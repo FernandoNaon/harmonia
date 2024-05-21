@@ -1,5 +1,3 @@
-import { ChangeEvent } from "react";
-
 export interface NoteData {
   value: number;
   label: string;
@@ -14,7 +12,6 @@ export interface NoteProps {
 }
 
 export interface ExtensionSelectProps {
-  label: string;
   modality: string;
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
@@ -32,4 +29,8 @@ export type modality = {
 export type seventh = {
   hasSeventh: boolean;
   isMajor?: boolean;
+};
+
+export type tool = {
+  value: string;
 };
