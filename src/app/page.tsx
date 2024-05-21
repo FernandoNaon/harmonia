@@ -1,16 +1,15 @@
+"use client"
 import React from "react";
-import Circle from "./components/Circle";
-// import { notes } from "./utils/utils.js";
-
+import Container from "./components/Container";
+import { HarmoniaProvider } from "./context/HarmoniaContext"; 
 const Home: React.FC = () => {
   return (
-    <div>
-      <h1 className="font-merriweather text-4xl font-bold">
-          Harmonia
-        </h1>
-      <Circle />
-
-    </div>
+    <HarmoniaProvider>
+      <div>
+        <h1 className="font-merriweather text-4xl font-bold mx-8">Harmonia</h1>
+        <Container />
+      </div>
+    </HarmoniaProvider>
   );
 };
 

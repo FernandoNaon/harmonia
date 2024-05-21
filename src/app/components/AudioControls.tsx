@@ -3,7 +3,7 @@ import { AudioControlsProps } from "../types/Index";
 
 const AudioControls: React.FC<AudioControlsProps> = ({ audio, onAudioToggle }) => {
   return (
-    <label className="inline-flex items-center align-bottom cursor-pointe mt-4">
+    <label className="inline-flex items-center align-bottom cursor-pointe mt-4 mx-8 w-80" >
       <input
         type="checkbox"
         checked={audio}

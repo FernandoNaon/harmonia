@@ -16,8 +16,9 @@ export interface NoteProps {
 export interface ExtensionSelectProps {
   label: string;
   modality: string;
-  options: Option[] | NoteData[];
-  onChange: (e: string) => void;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+  activeOption: string;
 }
 
 export type isMajor = {

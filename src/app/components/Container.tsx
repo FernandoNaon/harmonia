@@ -7,14 +7,17 @@ import ExtensionSelect from "./ExtensionSelect";
 import { NoteData, seventh, modality } from "../types/Index";
 import { notes, scaleOptions, seventhOptions } from "../utils/utils";
 import * as Tone from "tone";
+import { useHarmonia } from "../context/HarmoniaContext";
 
-const Circle: React.FC = () => {
+const Container: React.FC = () => {
   const [scale, setScale] = useState<NoteData>({ value: 1, label: "C" });
   const [modality, setModality] = useState<modality>({ modality: "Major" });
   const [seventh, setSeventh] = useState<seventh>({ hasSeventh: false });
   const [chordNotes, setChordNotes] = useState<NoteData[]>([]);
   const [players, setPlayers] = useState<Tone.Player[]>([]);
   const [audio, setAudio] = useState<boolean>(false);
+  const { test } = useHarmonia();
+
 
   useEffect(() => {
     setChordNotes(generateChord(scale.value - 1));
@@ -150,62 +153,70 @@ const Circle: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <>
+    <h1>{test}</h1>
       <AudioControls audio={audio} onAudioToggle={handleAudioToggle} />
-      <div className="flex items-center justify-center">
-        <div className="relative mt-9 w-80 h-80">
-          {notes.map((note, index) => {
-            const { x, y } = calculatePosition(note.value - 1);
-            const noteStyle: React.CSSProperties = {
-              position: "absolute",
-              top: `${y}px`,
-              left: `${x}px`,
-              transform: "translate(-50%, -50%)",
-              zIndex: 1,
-              fontSize: scale.label === note.label ? "1.75rem" : "1rem",
-            };
-            const isInChord = chordNotes.some(
-              (chordNote) => chordNote.value === note.value
-            );
+      <div className="flex flex-col sm:flex-col md:flex-col lg:flex-row items-center gap-8 mx-8">
+        <div className="w-fit flex items-center justify-center">
+          <div className="relative mt-9 w-80 h-80">
+            {notes.map((note, index) => {
+              const { x, y } = calculatePosition(note.value - 1);
+              const noteStyle: React.CSSProperties = {
+                position: "absolute",
+                top: `${y}px`,
+                left: `${x}px`,
+                transform: "translate(-50%, -50%)",
+                zIndex: 1,
+                fontSize: scale.label === note.label ? "1.75rem" : "1rem",
+              };
+              const isInChord = chordNotes.some(
+                (chordNote) => chordNote.value === note.value
+              );
 
-            return (
-              <div key={index} style={noteStyle}>
-                {isInChord ? (
-                  <button className="bg-[var(--primary-color)] h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center">
-                    {note.label}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleChangeNote(note.value)}
-                    className="bg-white hover:bg-gray-100 h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center"
-                  >
-                    {note.label}
-                  </button>
-                )}
-              </div>
-            );
-          })}
-          <svg className="z-0 absolute w-full h-full">
-            {scale && drawChordLines()}
-          </svg>
+              return (
+                <div key={index} style={noteStyle}>
+                  {isInChord ? (
+                    <button className="bg-[var(--primary-color)] h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center">
+                      {note.label}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleChangeNote(note.value)}
+                      className="bg-white hover:bg-gray-100 h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center"
+                    >
+                      {note.label}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+            <svg className="z-0 absolute w-full h-full">
+              {scale && drawChordLines()}
+            </svg>
+          </div>
+        </div>
+        {/* <div className="w-fit flex flex-col gap-8 justify-start mx-2"> */}
+        <div className="w-fit flex flex-col gap-8 justify-start mx-2  h-[15rem] bg-white p-8 rounded-[25px] ">
+          <ExtensionSelect
+            label="Chord Modality"
+            options={scaleOptions}
+            modality={modality.modality}
+            onChange={handleChangeScale}
+            activeOption={modality.modality}
+          />
+          <ExtensionSelect
+            label="Seventh Extension"
+            options={seventhOptions}
+            modality={modality.modality}
+            onChange={handleChangeSeventh}
+            activeOption={
+              seventh.hasSeventh ? (seventh.isMajor ? "Major" : "Minor") : "Null"
+            } 
+          />
         </div>
       </div>
-      <div className="flex flex-col gap-8 justify-start mx-2">
-        <ExtensionSelect
-          label="Chord Modality"
-          options={scaleOptions}
-          modality={modality.modality}
-          onChange={handleChangeScale}
-        />
-        <ExtensionSelect
-          label="Seventh Extension"
-          options={seventhOptions}
-          modality={modality.modality}
-          onChange={handleChangeSeventh}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 
-export default Circle;
+export default Container;
