@@ -12,8 +12,8 @@ const config: Config = {
         merriweather: ["Merriweather", "sans-serif"],
       },
       colors: {
-        "primary-color": "var(--primary-color)",
-        "secondary-color": "var(--secondary-color)",
+        primary: "var(--primary-color)",
+        secondary: "var(--secondary-color)",
       },
     },
   },

@@ -6,9 +6,10 @@ import HarmonicSphere from "./HarmonicSphere";
 import { useHarmonia } from "../context/HarmoniaContext";
 import ChordGenerator from "./ChordGenerator";
 import ToolSelector from "./ToolSelector";
+import GreekModes from "./GreekModes";
 
 const Container: React.FC = () => {
-  const {} = useHarmonia();
+  const {selectedTool} = useHarmonia();
 
   return (
     <>
@@ -17,8 +18,9 @@ const Container: React.FC = () => {
         <HarmonicSphere />
         <div>
           <ToolSelector />
-          <ChordGenerator />
-        </div>
+         {selectedTool.value === 'chordGen' && <ChordGenerator />}
+         {selectedTool.value === 'greekModes' && <GreekModes />}
+       </div>
       </div>
     </>
   );

@@ -33,5 +33,15 @@ export const tool: Option[] = [
   { value: "greekModes", label: "Greek Modes" },
 ];
 
+export const greekModes: Option[] = [
+  { value: "Ionian", label: "Ionian" },
+  { value: "Dorian", label: "Dorian" },
+  { value: "Phrygian", label: "Phrygian" },
+  { value: "Lydian", label: "Lydian" },
+  { value: "Mixolydian", label: "Mixolydian" },
+  { value: "Aeolian", label: "Aeolian" },
+  { value: "Locrian", label: "Locrian" },
+];
+
 export const radius = 150;
 export const angleIncrement = (2 * Math.PI) / notes.length;

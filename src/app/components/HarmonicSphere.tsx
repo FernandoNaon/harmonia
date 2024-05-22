@@ -22,7 +22,6 @@ const HarmonicSphere: React.FC = () => {
             left: `${x}px`,
             transform: "translate(-50%, -50%)",
             zIndex: 1,
-            fontSize: scale.label === note.label ? "1.75rem" : "1rem",
           };
           const isInChord = chordNotes.some(
             (chordNote) => chordNote.value === note.value
@@ -31,13 +30,18 @@ const HarmonicSphere: React.FC = () => {
           return (
             <div key={index} style={noteStyle}>
               {isInChord ? (
-                <button className="bg-[var(--primary-color)] h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center">
+                <button
+                  onClick={() => handleChangeNote(note.value, notes)}
+                  className={` text-white border rounded-full shadow text-center ${
+                    scale.label === note.label ? "h-12 w-12 bg-secondary" : "h-8 w-8 bg-secondary"
+                  }`}
+                >
                   {note.label}
                 </button>
               ) : (
                 <button
                   onClick={() => handleChangeNote(note.value, notes)}
-                  className="bg-white hover:bg-gray-100 h-16 w-16 text-gray-800  py-2 px-4 border rounded-full shadow text-center"
+                  className="bg-white hover:bg-gray-100 h-8 w-8 text-gray-800 border rounded-full shadow text-center"
                 >
                   {note.label}
                 </button>
