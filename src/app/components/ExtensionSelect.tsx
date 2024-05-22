@@ -19,14 +19,14 @@ const ExtensionSelect: React.FC<ExtensionSelectProps> = ({
         }
         return (
           <button
-            className={`bg-gray-50 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l ${
-              activeOption === option.value ? "bg-gray-400 text-white" : ""
-            }`}
-            key={index}
-            onClick={() => onChange(option.value.toString())}
-          >
-            {option.label}
-          </button>
+          className={`bg-gray-50 hover:bg-gray-500 hover:text-white text-gray-800 font-bold py-2 px-4 rounded-l ${
+            activeOption === option.value ? "bg-gray-500 text-white" : ""
+          }`}
+          key={index}
+          onClick={() => onChange(option.value.toString())}
+        >
+          {option.label}
+        </button>
         );
       })}
     </div>

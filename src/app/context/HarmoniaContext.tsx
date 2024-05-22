@@ -27,6 +27,8 @@ interface HarmoniaContext {
   setPlayers: React.Dispatch<React.SetStateAction<Tone.Player[]>>;
   selectedTool: tool;
   setSelectedTool: React.Dispatch<React.SetStateAction<tool>>;
+  selectedGreekMode: tool;
+  setSelectedGreekMode: React.Dispatch<React.SetStateAction<tool>>;
 
   getNoteFilePath: (noteValue: number, baseNote: number) => string;
   handleChangeNote: (value: number, notes: NoteData[]) => void;
@@ -37,8 +39,10 @@ interface HarmoniaContext {
   calculatePosition: (index: number) => { x: number; y: number };
   drawChordLines: () => ReactNode;
   generateChord: (noteIndex: number) => NoteData[];
+  generateMode: (noteIndex: number, mode: string) => NoteData[];
   preloadAudio: () => void;
   handleChangeTool: (selectedValue: string) => void;
+  handleChangeGreekMode: (selectedValue: string) => void;
 }
 
 const HarmoniaContext = createContext<HarmoniaContext | undefined>(undefined);
@@ -55,6 +59,9 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
   const [modality, setModality] = useState<modality>({ modality: "Major" });
   const [seventh, setSeventh] = useState<seventh>({ hasSeventh: false });
   const [selectedTool, setSelectedTool] = useState<tool>({ value: "chordGen" });
+  const [selectedGreekMode, setSelectedGreekMode] = useState<tool>({
+    value: "Ionian",
+  });
 
   const [chordNotes, setChordNotes] = useState<NoteData[]>([]);
   const [audio, setAudio] = useState<boolean>(false);
@@ -83,6 +90,10 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
 
   const handleChangeScale = (selectedValue: string) => {
     setModality({ modality: selectedValue });
+  };
+
+  const handleChangeGreekMode = (selectedValue: string) => {
+    setSelectedGreekMode({ value: selectedValue });
   };
 
   const handleChangeSeventh = (selectedValue: string) => {
@@ -165,6 +176,31 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
     });
   };
 
+  const generateMode = (noteIndex: number, mode: string): NoteData[] => {
+    const modeIntervals: { [key: string]: number[] } = {
+      Ionian: [0, 2, 4, 5, 7, 9, 11],
+      Dorian: [0, 2, 3, 5, 7, 9, 10],
+      Phrygian: [0, 1, 3, 5, 7, 8, 10],
+      Lydian: [0, 2, 4, 6, 7, 9, 11],
+      Mixolydian: [0, 2, 4, 5, 7, 9, 10],
+      Aeolian: [0, 2, 3, 5, 7, 8, 10],
+      Locrian: [0, 1, 3, 5, 6, 8, 10],
+    };
+
+    const intervals = modeIntervals[mode];
+
+    if (!intervals) {
+      throw new Error("Invalid mode");
+    }
+
+    const modeNotes = intervals.map((interval) => {
+      const newIndex = (noteIndex + interval) % notes.length;
+      return notes[newIndex];
+    });
+
+    return modeNotes;
+  };
+
   const preloadAudio = () => {
     console.log("Preload Audio");
     const baseNote = scale.value;
@@ -187,16 +223,15 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
   };
 
   useEffect(() => {
-    setChordNotes(generateChord(scale.value - 1));
-  }, [scale, modality, seventh]);
+    if (selectedTool.value === "chordGen")
+      setChordNotes(generateChord(scale.value - 1));
+    if (selectedTool.value === "greekModes")
+      setChordNotes(generateMode(scale.value - 1, selectedGreekMode.value));
+  }, [scale, modality, seventh, selectedTool, selectedGreekMode]);
 
   useEffect(() => {
     preloadAudio();
   }, [chordNotes]);
-
-  useEffect(() => {
-   console.log(selectedTool.value)
-  }, [selectedTool]);
 
   return (
     <HarmoniaContext.Provider
@@ -226,7 +261,11 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
         preloadAudio,
         selectedTool,
         setSelectedTool,
-        handleChangeTool
+        handleChangeTool,
+        generateMode,
+        selectedGreekMode,
+        setSelectedGreekMode,
+        handleChangeGreekMode,
       }}
     >
       {children}

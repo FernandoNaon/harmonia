@@ -1,11 +1,20 @@
-import React from 'react'
+import React from "react";
+import { useHarmonia } from "../context/HarmoniaContext";
+import ExtensionSelect from "./ExtensionSelect";
+import { greekModes } from "../utils/utils";
 
-type Props = {}
-
-const GreekModes = (props: Props) => {
+const GreekModes: React.FC = () => {
+  const { selectedGreekMode, handleChangeGreekMode } = useHarmonia();
   return (
-    <div>GreekModes</div>
-  )
-}
+    <div className="w-fit flex flex-col gap-8 justify-center mx-2  bg-white p-8 rounded-[25px] ">
+      <ExtensionSelect
+        options={greekModes}
+        modality={selectedGreekMode.value}
+        onChange={handleChangeGreekMode}
+        activeOption={selectedGreekMode.value}
+      />
+    </div>
+  );
+};
 
-export default GreekModes
+export default GreekModes;
