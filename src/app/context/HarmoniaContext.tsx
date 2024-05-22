@@ -133,12 +133,13 @@ export const HarmoniaProvider: React.FC<HarmoniaProviderProps> = ({
 
     const pathStyle: React.CSSProperties = {
       fill: "none",
-      stroke: "var(--primary-color)",
+      stroke: "var(--secondary-color)",
       strokeWidth: "4",
     };
+    console.log(<path d={d} style={pathStyle} />)
     return <path d={d} style={pathStyle} />;
   };
-
+  
   const generateChord = (noteIndex: number): NoteData[] => {
     let chordIntervals: number[];
     switch (modality.modality) {
