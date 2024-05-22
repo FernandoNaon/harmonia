@@ -9,7 +9,8 @@ const ExtensionSelect: React.FC<ExtensionSelectProps> = ({
   activeOption,
 }) => {
   return (
-    <div className="inline-flex gap-1">
+    // <div className={`grid grid-cols-4 gap-1 ${options.length > 4 ? 'grid-flow-row' : 'inline-flex'}`}>
+    <div className='grid grid-cols-4 gap-1 grid-flow-row'>
       {options.map((option, index) => {
         if (
           (modality === "Dim" && option.label === "Maj 7th") ||
@@ -19,14 +20,14 @@ const ExtensionSelect: React.FC<ExtensionSelectProps> = ({
         }
         return (
           <button
-          className={`bg-gray-50 hover:bg-gray-500 hover:text-white text-gray-800 font-bold py-2 px-4 rounded-l ${
-            activeOption === option.value ? "bg-gray-500 text-white" : ""
-          }`}
-          key={index}
-          onClick={() => onChange(option.value.toString())}
-        >
-          {option.label}
-        </button>
+            className={` w-fit h-8 bg-gray-50 hover:bg-gray-500 hover:text-white text-gray-800 font-bold py-2 px-4 rounded-l text-xs sm:text-base  ${
+              activeOption === option.value ? "bg-gray-500 text-white" : ""
+            }`}
+            key={index}
+            onClick={() => onChange(option.value.toString())}
+          >
+            {option.label}
+          </button>
         );
       })}
     </div>
